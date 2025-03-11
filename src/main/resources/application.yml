@@ -20,6 +20,16 @@ spring:
     database: 0
     timeout: 60000
 
+# 添加Swagger UI配置
+springfox:
+  documentation:
+    enabled: true
+    swagger-ui:
+      enabled: true
+      base-url: /swagger-ui
+    open-api:
+      enabled: true
+
 mybatis:
   mapper-locations: classpath:mapper/*.xml
   type-aliases-package: com.healthmanager.entity
@@ -31,6 +41,7 @@ logging:
   level:
     com.healthmanager: debug
     org.springframework.security: info
+    springfox: debug
 
 jwt:
   secret: healthmanager_secret_key_for_jwt_token_generation_and_validation
