@@ -41,21 +41,25 @@ public class HomeServiceImpl implements HomeService {
     
     @Override
     public HomeOverviewDTO getHomeOverview(Long userId) {
+        log.info("获取首页概览数据，用户ID: {}", userId);
         // 检查用户是否存在
         User user = userMapper.selectById(userId);
         if (user == null) {
+            log.error("用户不存在，用户ID: {}", userId);
             throw new ApiException("用户不存在");
         }
         
         HomeOverviewDTO homeOverviewDTO = new HomeOverviewDTO();
         
         // 设置用户信息
+        log.info("设置用户信息，用户ID: {}", userId);
         HomeOverviewDTO.UserInfoDTO userInfoDTO = new HomeOverviewDTO.UserInfoDTO();
         userInfoDTO.setNickName(user.getNickName());
         userInfoDTO.setAvatarUrl(user.getAvatarUrl());
         homeOverviewDTO.setUserInfo(userInfoDTO);
         
         // 设置健康数据
+        log.info("设置健康数据，用户ID: {}", userId);
         HealthData healthData = healthDataMapper.selectLatestByUserId(userId);
         HomeOverviewDTO.HealthDataDTO healthDataDTO = new HomeOverviewDTO.HealthDataDTO();
         if (healthData != null) {
@@ -87,6 +91,7 @@ public class HomeServiceImpl implements HomeService {
         homeOverviewDTO.setHealthData(healthDataDTO);
         
         // 设置活动图表数据
+        log.info("设置活动图表数据，用户ID: {}", userId);
         HomeOverviewDTO.ActivityChartDTO activityChartDTO = new HomeOverviewDTO.ActivityChartDTO();
         List<String> dates = new ArrayList<>();
         List<Integer> values = new ArrayList<>();
@@ -130,14 +135,17 @@ public class HomeServiceImpl implements HomeService {
         activityChartDTO.setValues(values);
         homeOverviewDTO.setActivityChart(activityChartDTO);
         
+        log.info("首页概览数据获取完成，用户ID: {}", userId);
         return homeOverviewDTO;
     }
     
     @Override
     public List<Task> getTodayTasks(Long userId) {
+        log.info("获取今日任务，用户ID: {}", userId);
         // 检查用户是否存在
         User user = userMapper.selectById(userId);
         if (user == null) {
+            log.error("用户不存在，用户ID: {}", userId);
             throw new ApiException("用户不存在");
         }
         
@@ -149,33 +157,42 @@ public class HomeServiceImpl implements HomeService {
         calendar.set(Calendar.MILLISECOND, 0);
         Date today = calendar.getTime();
         
-        return taskMapper.selectByUserIdAndDate(userId, today);
+        List<Task> tasks = taskMapper.selectByUserIdAndDate(userId, today);
+        log.info("今日任务获取完成，用户ID: {}, 任务数量: {}", userId, tasks.size());
+        return tasks;
     }
     
     @Override
     public Task updateTaskStatus(Long taskId, Boolean completed) {
+        log.info("更新任务状态，任务ID: {}, 完成状态: {}", taskId, completed);
         if (taskId == null) {
+            log.error("任务ID不能为空");
             throw new ApiException("任务ID不能为空");
         }
         
         Task task = taskMapper.selectById(taskId);
         if (task == null) {
+            log.error("任务不存在，任务ID: {}", taskId);
             throw new ApiException("任务不存在");
         }
         
         int result = taskMapper.updateCompletedStatus(taskId, completed);
         if (result > 0) {
+            log.info("任务状态更新成功，任务ID: {}", taskId);
             return taskMapper.selectById(taskId);
         } else {
+            log.error("更新任务状态失败，任务ID: {}", taskId);
             throw new ApiException("更新任务状态失败");
         }
     }
     
     @Override
     public ActivityStatsDTO getActivityStats(Long userId, String period) {
+        log.info("获取活动统计数据，用户ID: {}, 时间周期: {}", userId, period);
         // 检查用户是否存在
         User user = userMapper.selectById(userId);
         if (user == null) {
+            log.error("用户不存在，用户ID: {}", userId);
             throw new ApiException("用户不存在");
         }
         
@@ -232,21 +249,26 @@ public class HomeServiceImpl implements HomeService {
         }
         
         // 查询活动统计数据
+        log.info("查询活动统计数据，用户ID: {}, 周期: {}, 周期值: {}", userId, period, periodValue);
         ActivityStats activityStats = activityStatsMapper.selectByUserIdAndPeriod(userId, period, periodValue);
         
         // 如果没有统计数据，则计算并保存
         if (activityStats == null) {
+            log.info("活动统计数据不存在，开始计算，用户ID: {}, 周期: {}", userId, period);
             activityStats = calculateActivityStats(userId, period, periodValue, startDate, endDate);
         }
         
         // 转换为DTO
-        return convertToActivityStatsDTO(activityStats);
+        ActivityStatsDTO activityStatsDTO = convertToActivityStatsDTO(activityStats);
+        log.info("活动统计数据获取完成，用户ID: {}", userId);
+        return activityStatsDTO;
     }
     
     /**
      * 计算活动统计数据
      */
     private ActivityStats calculateActivityStats(Long userId, String periodType, String periodValue, Date startDate, Date endDate) {
+        log.info("计算活动统计数据，用户ID: {}, 周期类型: {}, 开始日期: {}, 结束日期: {}", userId, periodType, startDate, endDate);
         ActivityStats activityStats = new ActivityStats();
         activityStats.setUserId(userId);
         activityStats.setPeriodType(periodType);
@@ -300,6 +322,7 @@ public class HomeServiceImpl implements HomeService {
      * 将ActivityStats转换为ActivityStatsDTO
      */
     private ActivityStatsDTO convertToActivityStatsDTO(ActivityStats activityStats) {
+        log.info("转换活动统计数据，统计ID: {}", activityStats.getId());
         ActivityStatsDTO activityStatsDTO = new ActivityStatsDTO();
         
         // 设置运动统计数据

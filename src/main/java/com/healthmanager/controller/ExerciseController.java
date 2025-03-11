@@ -28,6 +28,7 @@ public class ExerciseController {
     @ApiOperation("获取运动记录列表")
     @GetMapping("/records")
     public Result<List<ExerciseRecord>> getExerciseRecords(@ApiParam(value = "用户ID", required = true) @RequestParam Long userId) {
+        log.info("获取运动记录列表，用户ID: {}", userId);
         List<ExerciseRecord> exerciseRecords = exerciseService.getExerciseRecords(userId);
         return Result.success(exerciseRecords);
     }
@@ -35,6 +36,7 @@ public class ExerciseController {
     @ApiOperation("获取运动记录详情")
     @GetMapping("/records/{id}")
     public Result<ExerciseDetailDTO> getExerciseDetail(@ApiParam(value = "运动记录ID", required = true) @PathVariable("id") Long id) {
+        log.info("获取运动记录详情，记录ID: {}", id);
         ExerciseDetailDTO exerciseDetailDTO = exerciseService.getExerciseDetail(id);
         return Result.success(exerciseDetailDTO);
     }
@@ -42,6 +44,7 @@ public class ExerciseController {
     @ApiOperation("保存运动记录")
     @PostMapping("/records")
     public Result<Long> saveExerciseRecord(@ApiParam(value = "运动记录详情", required = true) @RequestBody ExerciseDetailDTO exerciseDetailDTO) {
+        log.info("保存运动记录，运动类型: {}", exerciseDetailDTO.getType());
         Long id = exerciseService.saveExerciseRecord(exerciseDetailDTO);
         return Result.success(id);
     }
@@ -51,6 +54,7 @@ public class ExerciseController {
     public Result<Boolean> updateExerciseRecord(
             @ApiParam(value = "运动记录ID", required = true) @PathVariable("id") Long id,
             @ApiParam(value = "运动记录详情", required = true) @RequestBody ExerciseDetailDTO exerciseDetailDTO) {
+        log.info("更新运动记录，记录ID: {}", id);
         boolean result = exerciseService.updateExerciseRecord(id, exerciseDetailDTO);
         return Result.success(result);
     }
@@ -58,6 +62,7 @@ public class ExerciseController {
     @ApiOperation("删除运动记录")
     @DeleteMapping("/records/{id}")
     public Result<Boolean> deleteExerciseRecord(@ApiParam(value = "运动记录ID", required = true) @PathVariable("id") Long id) {
+        log.info("删除运动记录，记录ID: {}", id);
         boolean result = exerciseService.deleteExerciseRecord(id);
         return Result.success(result);
     }

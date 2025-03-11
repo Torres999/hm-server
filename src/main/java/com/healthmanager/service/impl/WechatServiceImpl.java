@@ -34,6 +34,7 @@ public class WechatServiceImpl implements WechatService {
 
     @Override
     public User login(JwtRequest jwtRequest) {
+        log.info("微信登录请求，授权码: {}", jwtRequest.getCode());
         // 获取微信OpenID
         String openId = getOpenId(jwtRequest.getCode());
         
@@ -42,6 +43,7 @@ public class WechatServiceImpl implements WechatService {
         
         // 如果用户不存在，则创建新用户
         if (user == null) {
+            log.info("用户不存在，创建新用户，OpenID: {}", openId);
             user = new User();
             user.setOpenId(openId);
             user.setNickName(jwtRequest.getNickName());
@@ -52,8 +54,10 @@ public class WechatServiceImpl implements WechatService {
             user.setUpdateTime(new Date());
             
             userMapper.insert(user);
+            log.info("新用户创建成功，用户ID: {}", user.getId());
         } else {
             // 如果用户存在，则更新用户信息
+            log.info("用户已存在，更新用户信息，用户ID: {}, OpenID: {}", user.getId(), openId);
             if (jwtRequest.getNickName() != null) {
                 user.setNickName(jwtRequest.getNickName());
             }
@@ -69,8 +73,10 @@ public class WechatServiceImpl implements WechatService {
             user.setUpdateTime(new Date());
             
             userMapper.update(user);
+            log.info("用户信息更新成功，用户ID: {}", user.getId());
         }
         
+        log.info("用户登录成功，用户ID: {}, OpenID: {}", user.getId(), openId);
         return user;
     }
 

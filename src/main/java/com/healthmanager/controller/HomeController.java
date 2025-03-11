@@ -30,6 +30,7 @@ public class HomeController {
     @ApiOperation("获取首页概览数据")
     @GetMapping("/overview")
     public Result<HomeOverviewDTO> getHomeOverview(@ApiParam(value = "用户ID", required = true) @RequestParam Long userId) {
+        log.info("获取首页概览数据，用户ID: {}", userId);
         HomeOverviewDTO homeOverviewDTO = homeService.getHomeOverview(userId);
         return Result.success(homeOverviewDTO);
     }
@@ -37,6 +38,7 @@ public class HomeController {
     @ApiOperation("获取今日任务")
     @GetMapping("/tasks")
     public Result<List<Task>> getTodayTasks(@ApiParam(value = "用户ID", required = true) @RequestParam Long userId) {
+        log.info("获取今日任务，用户ID: {}", userId);
         List<Task> tasks = homeService.getTodayTasks(userId);
         return Result.success(tasks);
     }
@@ -47,6 +49,7 @@ public class HomeController {
             @ApiParam(value = "任务ID", required = true) @PathVariable("id") Long taskId,
             @ApiParam(value = "任务状态", required = true) @RequestBody Map<String, Boolean> statusMap) {
         Boolean completed = statusMap.get("completed");
+        log.info("更新任务状态，任务ID: {}，完成状态: {}", taskId, completed);
         if (completed == null) {
             return Result.error(400, "任务状态不能为空");
         }
@@ -59,6 +62,7 @@ public class HomeController {
     public Result<ActivityStatsDTO> getActivityStats(
             @ApiParam(value = "用户ID", required = true) @RequestParam Long userId,
             @ApiParam(value = "时间周期，可选值：week(默认)、month、year") @RequestParam(required = false) String period) {
+        log.info("获取活动统计数据，用户ID: {}，时间周期: {}", userId, period);
         ActivityStatsDTO activityStatsDTO = homeService.getActivityStats(userId, period);
         return Result.success(activityStatsDTO);
     }

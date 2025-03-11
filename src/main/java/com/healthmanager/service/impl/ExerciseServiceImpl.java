@@ -40,13 +40,16 @@ public class ExerciseServiceImpl implements ExerciseService {
 
     @Override
     public List<ExerciseRecord> getExerciseRecords(Long userId) {
+        log.info("获取用户运动记录列表，用户ID: {}", userId);
         return exerciseRecordMapper.selectByUserId(userId);
     }
 
     @Override
     public ExerciseDetailDTO getExerciseDetail(Long id) {
+        log.info("获取运动记录详情，记录ID: {}", id);
         ExerciseRecord exerciseRecord = exerciseRecordMapper.selectById(id);
         if (exerciseRecord == null) {
+            log.info("运动记录不存在，记录ID: {}", id);
             throw new ApiException("运动记录不存在");
         }
 
@@ -68,6 +71,7 @@ public class ExerciseServiceImpl implements ExerciseService {
         exerciseDetailDTO.setNotes(exerciseRecord.getNotes());
 
         // 获取心率记录
+        log.info("获取心率记录，运动记录ID: {}", id);
         List<HeartRateRecord> heartRateRecords = heartRateRecordMapper.selectByExerciseId(id);
         if (heartRateRecords != null && !heartRateRecords.isEmpty()) {
             List<ExerciseDetailDTO.HeartRateDTO> heartRateDTOs = heartRateRecords.stream()
@@ -82,6 +86,7 @@ public class ExerciseServiceImpl implements ExerciseService {
         }
 
         // 获取运动路线
+        log.info("获取运动路线，运动记录ID: {}", id);
         ExerciseRoute exerciseRoute = exerciseRouteMapper.selectByExerciseId(id);
         if (exerciseRoute != null) {
             ExerciseDetailDTO.RouteDTO routeDTO = new ExerciseDetailDTO.RouteDTO();
@@ -137,6 +142,7 @@ public class ExerciseServiceImpl implements ExerciseService {
     @Override
     @Transactional
     public Long saveExerciseRecord(ExerciseDetailDTO exerciseDetailDTO) {
+        log.info("保存运动记录，运动类型: {}", exerciseDetailDTO.getType());
         ExerciseRecord exerciseRecord = new ExerciseRecord();
         
         // 设置基本信息
@@ -179,9 +185,11 @@ public class ExerciseServiceImpl implements ExerciseService {
         // 保存运动记录
         exerciseRecordMapper.insert(exerciseRecord);
         Long exerciseId = exerciseRecord.getId();
+        log.info("运动记录保存成功，记录ID: {}", exerciseId);
         
         // 保存运动路线
         if (exerciseDetailDTO.getRoute() != null) {
+            log.info("保存运动路线，运动记录ID: {}", exerciseId);
             ExerciseRoute exerciseRoute = new ExerciseRoute();
             exerciseRoute.setExerciseId(exerciseId);
             exerciseRoute.setStartLat(exerciseDetailDTO.getRoute().getStartLat());
