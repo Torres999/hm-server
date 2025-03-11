@@ -3,6 +3,7 @@ package com.healthmanager.security;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
+import io.jsonwebtoken.security.Keys;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
@@ -11,6 +12,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.function.Function;
+import java.nio.charset.StandardCharsets;
 
 /**
  * JWT工具类
@@ -60,8 +62,10 @@ public class JwtTokenUtil {
      * @return 所有声明
      */
     private Claims getAllClaimsFromToken(String token) {
-        return Jwts.parser()
-                .setSigningKey(secret)
+        byte[] keyBytes = secret.getBytes(StandardCharsets.UTF_8);
+        return Jwts.parserBuilder()
+                .setSigningKey(Keys.hmacShaKeyFor(keyBytes))
+                .build()
                 .parseClaimsJws(token)
                 .getBody();
     }
@@ -103,12 +107,13 @@ public class JwtTokenUtil {
      * @return JWT令牌
      */
     private String doGenerateToken(Map<String, Object> claims, String subject) {
+        byte[] keyBytes = secret.getBytes(StandardCharsets.UTF_8);
         return Jwts.builder()
                 .setClaims(claims)
                 .setSubject(subject)
                 .setIssuedAt(new Date(System.currentTimeMillis()))
                 .setExpiration(new Date(System.currentTimeMillis() + expiration))
-                .signWith(SignatureAlgorithm.HS512, secret)
+                .signWith(Keys.hmacShaKeyFor(keyBytes), SignatureAlgorithm.HS512)
                 .compact();
     }
 
