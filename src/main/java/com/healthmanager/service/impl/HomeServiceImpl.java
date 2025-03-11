@@ -10,7 +10,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
 import java.util.*;
 
@@ -305,7 +304,7 @@ public class HomeServiceImpl implements HomeService {
             }
         }
         
-        int dayCount = healthDataList.size() > 0 ? healthDataList.size() : 1;
+        int dayCount = !healthDataList.isEmpty() ? healthDataList.size() : 1;
         int stepsDailyAverage = stepsTotal / dayCount;
         
         activityStats.setStepsTotal(stepsTotal);
