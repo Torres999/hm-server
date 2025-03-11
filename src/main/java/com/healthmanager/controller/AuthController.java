@@ -47,6 +47,7 @@ public class AuthController {
         
         // 生成JWT令牌
         String token = jwtTokenUtil.generateToken(user.getOpenId());
+        log.info("用户登录成功，token: {}", token);
         
         // 构建响应对象
         JwtResponse response = new JwtResponse(

@@ -36,7 +36,8 @@ public class WechatServiceImpl implements WechatService {
     public User login(JwtRequest jwtRequest) {
         log.info("微信登录请求，授权码: {}", jwtRequest.getCode());
         // 获取微信OpenID
-        String openId = getOpenId(jwtRequest.getCode());
+//        String openId = getOpenId(jwtRequest.getCode());// TODO: 测试用，写死了
+        String openId = "wx-openid-001";
         
         // 查询用户是否存在
         User user = userMapper.selectByOpenId(openId);
