@@ -1,17 +1,17 @@
 package com.healthmanager;
 
-import org.springframework.boot.SpringApplication;
-import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.mybatis.spring.annotation.MapperScan;
-import springfox.documentation.oas.annotations.EnableOpenApi;
-import org.springframework.context.annotation.Bean;
-import org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerMapping;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.config.BeanPostProcessor;
+import org.springframework.boot.SpringApplication;
+import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.context.annotation.Bean;
 import org.springframework.util.ReflectionUtils;
+import org.springframework.web.servlet.config.annotation.PathMatchConfigurer;
+import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 import org.springframework.web.servlet.mvc.method.RequestMappingInfoHandlerMapping;
-import springfox.documentation.spring.web.plugins.WebFluxRequestHandlerProvider;
+import org.mybatis.spring.annotation.MapperScan;
 import springfox.documentation.spring.web.plugins.WebMvcRequestHandlerProvider;
+
 import java.lang.reflect.Field;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -21,22 +21,38 @@ import java.util.stream.Collectors;
  */
 @SpringBootApplication
 @MapperScan("com.healthmanager.mapper")
-@EnableOpenApi
 public class HmServerApplication {
 
     public static void main(String[] args) {
+        // 不再需要设置路径匹配器
         SpringApplication.run(HmServerApplication.class, args);
     }
     
     /**
      * 解决Springfox与Spring Boot 2.7.x的兼容性问题
+     * Spring Boot 2.7使用PathPatternParser作为默认路径匹配器，但Springfox 2.9.2不兼容它
      */
     @Bean
-    public static BeanPostProcessor springfoxHandlerProviderBeanPostProcessor() {
+    public WebMvcConfigurer webMvcConfigurer() {
+        return new WebMvcConfigurer() {
+            @Override
+            public void configurePathMatch(PathMatchConfigurer configurer) {
+                configurer.setUseTrailingSlashMatch(true);
+                configurer.setUseRegisteredSuffixPatternMatch(true);
+            }
+        };
+    }
+    
+    /**
+     * 解决Springfox与Spring Boot 2.7.x的兼容性问题
+     * 修复documentationPluginsBootstrapper的空指针异常
+     */
+    @Bean
+    public BeanPostProcessor springfoxHandlerProviderBeanPostProcessor() {
         return new BeanPostProcessor() {
             @Override
             public Object postProcessAfterInitialization(Object bean, String beanName) throws BeansException {
-                if (bean instanceof WebMvcRequestHandlerProvider || bean instanceof WebFluxRequestHandlerProvider) {
+                if (bean instanceof WebMvcRequestHandlerProvider) {
                     customizeSpringfoxHandlerMappings(getHandlerMappings(bean));
                 }
                 return bean;

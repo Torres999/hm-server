@@ -4,9 +4,11 @@ server:
     context-path: /hm
 
 spring:
+  main:
+    allow-bean-definition-overriding: true
   datasource:
-    driver-class-name: com.mysql.jdbc.Driver
-    url: jdbc:mysql://localhost:3306/health_manager?useUnicode=true&characterEncoding=utf-8&useSSL=false
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://localhost:3306/health_manager?useUnicode=true&characterEncoding=utf-8&useSSL=false&allowPublicKeyRetrieval=true
     username: root
     password: 123456
   mvc:
@@ -20,14 +22,15 @@ spring:
     database: 0
     timeout: 60000
 
-# 添加Swagger UI配置
+# Swagger 2.x 配置
 springfox:
   documentation:
     enabled: true
+    auto-startup: true
+    swagger:
+      v2:
+        path: /api-docs
     swagger-ui:
-      enabled: true
-      base-url: /swagger-ui
-    open-api:
       enabled: true
 
 mybatis:
@@ -39,9 +42,9 @@ mybatis:
 
 logging:
   level:
-    com.healthmanager: debug
+    com.healthmanager: info
     org.springframework.security: info
-    springfox: debug
+    springfox: info
 
 jwt:
   secret: healthmanager_secret_key_for_jwt_token_generation_and_validation

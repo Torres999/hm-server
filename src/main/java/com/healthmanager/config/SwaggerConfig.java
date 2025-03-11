@@ -2,6 +2,10 @@ package com.healthmanager.config;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
+import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
+
+import com.google.common.base.Predicates;
 import springfox.documentation.builders.ApiInfoBuilder;
 import springfox.documentation.builders.PathSelectors;
 import springfox.documentation.builders.RequestHandlerSelectors;
@@ -9,48 +13,45 @@ import springfox.documentation.service.ApiInfo;
 import springfox.documentation.service.Contact;
 import springfox.documentation.spi.DocumentationType;
 import springfox.documentation.spring.web.plugins.Docket;
-import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
-import org.springframework.web.servlet.config.annotation.EnableWebMvc;
+import springfox.documentation.swagger2.annotations.EnableSwagger2;
 
 /**
- * Swagger配置类
+ * Swagger 2.x配置类
  */
 @Configuration
-@EnableWebMvc
+@EnableSwagger2
 public class SwaggerConfig implements WebMvcConfigurer {
 
     @Bean
-    public Docket createRestApi() {
-        return new Docket(DocumentationType.OAS_30)
-                .apiInfo(apiInfo())
+    public Docket api() {
+        return new Docket(DocumentationType.SWAGGER_2)
                 .select()
                 .apis(RequestHandlerSelectors.basePackage("com.healthmanager.controller"))
                 .paths(PathSelectors.any())
-                .build();
+                .build()
+                .apiInfo(apiInfo())
+                .useDefaultResponseMessages(false)
+                .forCodeGeneration(true);
     }
 
     private ApiInfo apiInfo() {
         return new ApiInfoBuilder()
-                .title("健康管理小程序API文档")
-                .description("健康管理小程序后端服务接口文档")
-                .contact(new Contact("健康管理团队", "http://www.example.com", "admin@example.com"))
-                .version("1.0.0")
+                .title("健康管理系统API")
+                .description("健康管理小程序后端服务API文档")
+                .version("1.0")
+                .contact(new Contact("健康管理团队", "https://healthmanager.com", "contact@healthmanager.com"))
+                .license("MIT License")
+                .licenseUrl("https://opensource.org/licenses/MIT")
                 .build();
     }
-    
-    /**
-     * 解决SpringFox Swagger 3.0.0与Spring Boot 2.7.x的兼容性问题
-     */
-    @Bean
-    public WebMvcConfigurer webMvcConfigurer() {
-        return new WebMvcConfigurer() {
-            @Override
-            public void addResourceHandlers(org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry registry) {
-                registry.addResourceHandler("/swagger-ui/**")
-                        .addResourceLocations("classpath:/META-INF/resources/webjars/springfox-swagger-ui/");
-                registry.addResourceHandler("/webjars/**")
-                        .addResourceLocations("classpath:/META-INF/resources/webjars/");
-            }
-        };
+
+    @Override
+    public void addResourceHandlers(ResourceHandlerRegistry registry) {
+        // 解决swagger无法访问的问题
+        registry.addResourceHandler("swagger-ui.html")
+                .addResourceLocations("classpath:/META-INF/resources/");
+        
+        registry.addResourceHandler("/webjars/**")
+                .addResourceLocations("classpath:/META-INF/resources/webjars/");
     }
 } 

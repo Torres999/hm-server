@@ -6,8 +6,8 @@ import com.healthmanager.dto.JwtResponse;
 import com.healthmanager.entity.User;
 import com.healthmanager.security.JwtTokenUtil;
 import com.healthmanager.service.WechatService;
-import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.tags.Tag;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -21,7 +21,7 @@ import javax.validation.Valid;
  */
 @RestController
 @RequestMapping("/api/auth")
-@Tag(name = "认证管理", description = "用户认证相关接口")
+@Api(tags = "认证管理", description = "用户认证相关接口")
 public class AuthController {
 
     @Autowired
@@ -36,7 +36,7 @@ public class AuthController {
      * @param jwtRequest 登录请求，包含微信授权码
      * @return JWT令牌和用户信息
      */
-    @Operation(summary = "微信登录", description = "通过微信授权码进行登录，返回JWT令牌和用户信息")
+    @ApiOperation(value = "微信登录", notes = "通过微信授权码进行登录，返回JWT令牌和用户信息")
     @PostMapping("/login")
     public Result<JwtResponse> login(@Valid @RequestBody JwtRequest jwtRequest) {
         // 调用微信登录服务
