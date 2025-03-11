@@ -84,6 +84,16 @@ public class JwtTokenUtil {
     }
 
     /**
+     * 为微信用户生成令牌
+     * @param openId 微信OpenID
+     * @return JWT令牌
+     */
+    public String generateToken(String openId) {
+        Map<String, Object> claims = new HashMap<>();
+        return doGenerateToken(claims, openId);
+    }
+
+    /**
      * 生成令牌
      * @param claims 声明
      * @param subject 主题

@@ -3,6 +3,7 @@ package com.healthmanager.mapper;
 import com.healthmanager.entity.User;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
+import java.util.List;
 
 /**
  * 用户Mapper接口
@@ -44,4 +45,18 @@ public interface UserMapper {
      * @return 影响行数
      */
     int deleteById(@Param("id") Long id);
+    
+    /**
+     * 分页查询用户列表
+     * @param offset 偏移量
+     * @param limit 限制数
+     * @return 用户列表
+     */
+    List<User> selectByPage(@Param("offset") int offset, @Param("limit") int limit);
+    
+    /**
+     * 查询用户总数
+     * @return 用户总数
+     */
+    int selectCount();
 } 

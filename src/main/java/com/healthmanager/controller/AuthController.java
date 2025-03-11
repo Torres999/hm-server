@@ -6,54 +6,54 @@ import com.healthmanager.dto.JwtResponse;
 import com.healthmanager.entity.User;
 import com.healthmanager.security.JwtTokenUtil;
 import com.healthmanager.service.WechatService;
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiOperation;
-import lombok.extern.slf4j.Slf4j;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.validation.Valid;
-import java.util.ArrayList;
-import java.util.List;
 
-@Slf4j
-@Api(tags = "认证相关接口")
+/**
+ * 认证控制器
+ */
 @RestController
-@RequestMapping("/auth")
+@RequestMapping("/api/auth")
+@Tag(name = "认证管理", description = "用户认证相关接口")
 public class AuthController {
 
     @Autowired
     private WechatService wechatService;
-
+    
     @Autowired
     private JwtTokenUtil jwtTokenUtil;
 
-    @ApiOperation("微信登录")
+    /**
+     * 微信登录
+     *
+     * @param jwtRequest 登录请求，包含微信授权码
+     * @return JWT令牌和用户信息
+     */
+    @Operation(summary = "微信登录", description = "通过微信授权码进行登录，返回JWT令牌和用户信息")
     @PostMapping("/login")
     public Result<JwtResponse> login(@Valid @RequestBody JwtRequest jwtRequest) {
-        log.info("微信登录请求: {}", jwtRequest);
-        
-        // 微信登录
+        // 调用微信登录服务
         User user = wechatService.login(jwtRequest);
         
-        // 生成JWT token
-        List<SimpleGrantedAuthority> authorities = new ArrayList<>();
-        authorities.add(new SimpleGrantedAuthority("ROLE_USER"));
+        // 生成JWT令牌
+        String token = jwtTokenUtil.generateToken(user.getOpenId());
         
-        UserDetails userDetails = new org.springframework.security.core.userdetails.User(
-                user.getOpenId(), "{noop}password", authorities);
-
-        String token = jwtTokenUtil.generateToken(userDetails);
+        // 构建响应对象
+        JwtResponse response = new JwtResponse(
+                token,
+                user.getId(),
+                user.getOpenId(),
+                user.getNickName(),
+                user.getAvatarUrl()
+        );
         
-        // 返回JWT响应
-        JwtResponse jwtResponse = new JwtResponse(
-                token, user.getId(), user.getOpenId(), user.getNickName(), user.getAvatarUrl());
-        
-        return Result.success(jwtResponse);
+        return Result.success(response);
     }
 } 

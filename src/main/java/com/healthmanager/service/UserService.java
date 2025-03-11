@@ -40,4 +40,12 @@ public interface UserService {
      * @return 是否成功
      */
     boolean deleteUser(Long id);
+    
+    /**
+     * 分页查询用户
+     * @param pageNum 页码
+     * @param pageSize 每页记录数
+     * @return 分页用户列表
+     */
+    Object getUsersByPage(Integer pageNum, Integer pageSize);
 } 

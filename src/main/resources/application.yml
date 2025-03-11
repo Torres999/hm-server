@@ -51,10 +51,7 @@ management:
   endpoints:
     web:
       exposure:
-        include: health,info,metrics,prometheus
-  endpoint:
-    health:
-      show-details: always
+        include: health,info
 
 # 微信小程序配置
 wechat:

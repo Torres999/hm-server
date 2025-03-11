@@ -53,4 +53,16 @@
     <delete id="deleteById">
         DELETE FROM user WHERE id = #{id}
     </delete>
+    
+    <select id="selectByPage" resultMap="BaseResultMap">
+        SELECT
+        <include refid="Base_Column_List"/>
+        FROM user
+        ORDER BY create_time DESC
+        LIMIT #{offset}, #{limit}
+    </select>
+    
+    <select id="selectCount" resultType="int">
+        SELECT COUNT(*) FROM user
+    </select>
 </mapper> 

@@ -7,6 +7,9 @@ import com.healthmanager.service.UserService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  * 用户Service实现类
@@ -77,5 +80,28 @@ public class UserServiceImpl implements UserService {
         
         int result = userMapper.deleteById(id);
         return result > 0;
+    }
+    
+    @Override
+    public Object getUsersByPage(Integer pageNum, Integer pageSize) {
+        if (pageNum == null || pageNum < 1) {
+            pageNum = 1;
+        }
+        if (pageSize == null || pageSize < 1) {
+            pageSize = 10;
+        }
+        
+        int offset = (pageNum - 1) * pageSize;
+        List<User> users = userMapper.selectByPage(offset, pageSize);
+        int total = userMapper.selectCount();
+        
+        Map<String, Object> result = new HashMap<>();
+        result.put("total", total);
+        result.put("list", users);
+        result.put("pageNum", pageNum);
+        result.put("pageSize", pageSize);
+        result.put("pages", (total + pageSize - 1) / pageSize);
+        
+        return result;
     }
 } 
