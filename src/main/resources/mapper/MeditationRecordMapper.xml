@@ -85,26 +85,30 @@
     </select>
 
     <select id="selectMeditationStreak" parameterType="java.lang.Long" resultType="java.lang.Integer">
-        SELECT COUNT(*) AS streak
+        SELECT 
+            COUNT(*) AS streak
         FROM (
-            SELECT meditation_date, 
-                   DATE_SUB(meditation_date, INTERVAL ROW_NUMBER() OVER (ORDER BY meditation_date) DAY) AS date_group
+            SELECT 
+                meditation_date,
+                @rownum := @rownum + 1 AS row_num
             FROM (
                 SELECT DISTINCT meditation_date
                 FROM meditation_record
                 WHERE user_id = #{userId,jdbcType=BIGINT}
                 ORDER BY meditation_date DESC
-            ) AS distinct_dates
-        ) AS grouped_dates
-        WHERE date_group = (
-            SELECT DATE_SUB(MAX(meditation_date), INTERVAL ROW_NUMBER() OVER (ORDER BY meditation_date) DAY) AS latest_group
-            FROM (
-                SELECT DISTINCT meditation_date
-                FROM meditation_record
-                WHERE user_id = #{userId,jdbcType=BIGINT}
-                ORDER BY meditation_date DESC
-                LIMIT 1
-            ) AS latest_date
-        )
+            ) AS dates,
+            (SELECT @rownum := 0) AS r
+        ) AS t
+        WHERE 
+            DATEDIFF(
+                (SELECT meditation_date FROM (
+                    SELECT DISTINCT meditation_date
+                    FROM meditation_record
+                    WHERE user_id = #{userId,jdbcType=BIGINT}
+                    ORDER BY meditation_date DESC
+                    LIMIT 1
+                ) AS first_date),
+                meditation_date
+            ) = row_num - 1
     </select>
 </mapper> 
