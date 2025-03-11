@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.healthmanager.mapper.HealthDataMapper">
+    <resultMap id="BaseResultMap" type="com.healthmanager.entity.HealthData">
+        <id column="id" property="id" jdbcType="BIGINT"/>
+        <result column="user_id" property="userId" jdbcType="BIGINT"/>
+        <result column="steps" property="steps" jdbcType="INTEGER"/>
+        <result column="heart_rate" property="heartRate" jdbcType="INTEGER"/>
+        <result column="sleep_hours" property="sleepHours" jdbcType="DECIMAL"/>
+        <result column="calories" property="calories" jdbcType="INTEGER"/>
+        <result column="record_date" property="recordDate" jdbcType="DATE"/>
+        <result column="create_time" property="createTime" jdbcType="TIMESTAMP"/>
+        <result column="update_time" property="updateTime" jdbcType="TIMESTAMP"/>
+    </resultMap>
+
+    <sql id="Base_Column_List">
+        id, user_id, steps, heart_rate, sleep_hours, calories, record_date, create_time, update_time
+    </sql>
+
+    <select id="selectById" parameterType="java.lang.Long" resultMap="BaseResultMap">
+        SELECT
+        <include refid="Base_Column_List"/>
+        FROM health_data
+        WHERE id = #{id,jdbcType=BIGINT}
+    </select>
+
+    <select id="selectByUserIdAndDate" resultMap="BaseResultMap">
+        SELECT
+        <include refid="Base_Column_List"/>
+        FROM health_data
+        WHERE user_id = #{userId,jdbcType=BIGINT}
+        AND record_date = #{recordDate,jdbcType=DATE}
+    </select>
+
+    <select id="selectLatestByUserId" parameterType="java.lang.Long" resultMap="BaseResultMap">
+        SELECT
+        <include refid="Base_Column_List"/>
+        FROM health_data
+        WHERE user_id = #{userId,jdbcType=BIGINT}
+        ORDER BY record_date DESC
+        LIMIT 1
+    </select>
+
+    <select id="selectByUserIdAndDateRange" resultMap="BaseResultMap">
+        SELECT
+        <include refid="Base_Column_List"/>
+        FROM health_data
+        WHERE user_id = #{userId,jdbcType=BIGINT}
+        AND record_date BETWEEN #{startDate,jdbcType=DATE} AND #{endDate,jdbcType=DATE}
+        ORDER BY record_date ASC
+    </select>
+
+    <insert id="insert" parameterType="com.healthmanager.entity.HealthData" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO health_data (user_id, steps, heart_rate, sleep_hours, calories, record_date)
+        VALUES (#{userId,jdbcType=BIGINT}, #{steps,jdbcType=INTEGER}, #{heartRate,jdbcType=INTEGER},
+                #{sleepHours,jdbcType=DECIMAL}, #{calories,jdbcType=INTEGER}, #{recordDate,jdbcType=DATE})
+    </insert>
+
+    <update id="update" parameterType="com.healthmanager.entity.HealthData">
+        UPDATE health_data
+        <set>
+            <if test="steps != null">
+                steps = #{steps,jdbcType=INTEGER},
+            </if>
+            <if test="heartRate != null">
+                heart_rate = #{heartRate,jdbcType=INTEGER},
+            </if>
+            <if test="sleepHours != null">
+                sleep_hours = #{sleepHours,jdbcType=DECIMAL},
+            </if>
+            <if test="calories != null">
+                calories = #{calories,jdbcType=INTEGER},
+            </if>
+            <if test="recordDate != null">
+                record_date = #{recordDate,jdbcType=DATE},
+            </if>
+        </set>
+        WHERE id = #{id,jdbcType=BIGINT}
+    </update>
+
+    <delete id="deleteById" parameterType="java.lang.Long">
+        DELETE FROM health_data
+        WHERE id = #{id,jdbcType=BIGINT}
+    </delete>
+</mapper> 

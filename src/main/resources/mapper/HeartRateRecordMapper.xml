@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.healthmanager.mapper.HeartRateRecordMapper">
+    <resultMap id="BaseResultMap" type="com.healthmanager.entity.HeartRateRecord">
+        <id column="id" property="id" jdbcType="BIGINT"/>
+        <result column="exercise_id" property="exerciseId" jdbcType="BIGINT"/>
+        <result column="time_point" property="timePoint" jdbcType="INTEGER"/>
+        <result column="value" property="value" jdbcType="INTEGER"/>
+        <result column="create_time" property="createTime" jdbcType="TIMESTAMP"/>
+    </resultMap>
+
+    <sql id="Base_Column_List">
+        id, exercise_id, time_point, value, create_time
+    </sql>
+
+    <select id="selectById" parameterType="java.lang.Long" resultMap="BaseResultMap">
+        SELECT
+        <include refid="Base_Column_List"/>
+        FROM heart_rate_record
+        WHERE id = #{id,jdbcType=BIGINT}
+    </select>
+
+    <select id="selectByExerciseId" parameterType="java.lang.Long" resultMap="BaseResultMap">
+        SELECT
+        <include refid="Base_Column_List"/>
+        FROM heart_rate_record
+        WHERE exercise_id = #{exerciseId,jdbcType=BIGINT}
+        ORDER BY time_point ASC
+    </select>
+
+    <insert id="insert" parameterType="com.healthmanager.entity.HeartRateRecord" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO heart_rate_record (exercise_id, time_point, value)
+        VALUES (#{exerciseId,jdbcType=BIGINT}, #{timePoint,jdbcType=INTEGER}, #{value,jdbcType=INTEGER})
+    </insert>
+
+    <insert id="batchInsert" parameterType="java.util.List">
+        INSERT INTO heart_rate_record (exercise_id, time_point, value)
+        VALUES
+        <foreach collection="list" item="item" separator=",">
+            (#{item.exerciseId,jdbcType=BIGINT}, #{item.timePoint,jdbcType=INTEGER}, #{item.value,jdbcType=INTEGER})
+        </foreach>
+    </insert>
+
+    <update id="update" parameterType="com.healthmanager.entity.HeartRateRecord">
+        UPDATE heart_rate_record
+        <set>
+            <if test="timePoint != null">
+                time_point = #{timePoint,jdbcType=INTEGER},
+            </if>
+            <if test="value != null">
+                value = #{value,jdbcType=INTEGER},
+            </if>
+        </set>
+        WHERE id = #{id,jdbcType=BIGINT}
+    </update>
+
+    <delete id="deleteById" parameterType="java.lang.Long">
+        DELETE FROM heart_rate_record
+        WHERE id = #{id,jdbcType=BIGINT}
+    </delete>
+
+    <delete id="deleteByExerciseId" parameterType="java.lang.Long">
+        DELETE FROM heart_rate_record
+        WHERE exercise_id = #{exerciseId,jdbcType=BIGINT}
+    </delete>
+</mapper> 

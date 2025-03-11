@@ -1,0 +1,110 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.healthmanager.mapper.MeditationRecordMapper">
+    <resultMap id="BaseResultMap" type="com.healthmanager.entity.MeditationRecord">
+        <id column="id" property="id" jdbcType="BIGINT"/>
+        <result column="user_id" property="userId" jdbcType="BIGINT"/>
+        <result column="course_id" property="courseId" jdbcType="BIGINT"/>
+        <result column="duration" property="duration" jdbcType="INTEGER"/>
+        <result column="meditation_date" property="meditationDate" jdbcType="DATE"/>
+        <result column="meditation_time" property="meditationTime" jdbcType="TIME"/>
+        <result column="create_time" property="createTime" jdbcType="TIMESTAMP"/>
+        <result column="update_time" property="updateTime" jdbcType="TIMESTAMP"/>
+    </resultMap>
+
+    <sql id="Base_Column_List">
+        id, user_id, course_id, duration, meditation_date, meditation_time, create_time, update_time
+    </sql>
+
+    <select id="selectById" parameterType="java.lang.Long" resultMap="BaseResultMap">
+        SELECT
+        <include refid="Base_Column_List"/>
+        FROM meditation_record
+        WHERE id = #{id,jdbcType=BIGINT}
+    </select>
+
+    <select id="selectByUserId" parameterType="java.lang.Long" resultMap="BaseResultMap">
+        SELECT
+        <include refid="Base_Column_List"/>
+        FROM meditation_record
+        WHERE user_id = #{userId,jdbcType=BIGINT}
+        ORDER BY meditation_date DESC, meditation_time DESC
+    </select>
+
+    <select id="selectByUserIdAndDateRange" resultMap="BaseResultMap">
+        SELECT
+        <include refid="Base_Column_List"/>
+        FROM meditation_record
+        WHERE user_id = #{userId,jdbcType=BIGINT}
+        AND meditation_date BETWEEN #{startDate,jdbcType=DATE} AND #{endDate,jdbcType=DATE}
+        ORDER BY meditation_date ASC, meditation_time ASC
+    </select>
+
+    <insert id="insert" parameterType="com.healthmanager.entity.MeditationRecord" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO meditation_record (user_id, course_id, duration, meditation_date, meditation_time)
+        VALUES (#{userId,jdbcType=BIGINT}, #{courseId,jdbcType=BIGINT}, #{duration,jdbcType=INTEGER},
+                #{meditationDate,jdbcType=DATE}, #{meditationTime,jdbcType=TIME})
+    </insert>
+
+    <update id="update" parameterType="com.healthmanager.entity.MeditationRecord">
+        UPDATE meditation_record
+        <set>
+            <if test="courseId != null">
+                course_id = #{courseId,jdbcType=BIGINT},
+            </if>
+            <if test="duration != null">
+                duration = #{duration,jdbcType=INTEGER},
+            </if>
+            <if test="meditationDate != null">
+                meditation_date = #{meditationDate,jdbcType=DATE},
+            </if>
+            <if test="meditationTime != null">
+                meditation_time = #{meditationTime,jdbcType=TIME},
+            </if>
+        </set>
+        WHERE id = #{id,jdbcType=BIGINT}
+    </update>
+
+    <delete id="deleteById" parameterType="java.lang.Long">
+        DELETE FROM meditation_record
+        WHERE id = #{id,jdbcType=BIGINT}
+    </delete>
+
+    <select id="countByUserIdAndDateRange" resultType="java.lang.Integer">
+        SELECT COUNT(*)
+        FROM meditation_record
+        WHERE user_id = #{userId,jdbcType=BIGINT}
+        AND meditation_date BETWEEN #{startDate,jdbcType=DATE} AND #{endDate,jdbcType=DATE}
+    </select>
+
+    <select id="sumDurationByUserIdAndDateRange" resultType="java.lang.Integer">
+        SELECT IFNULL(SUM(duration), 0)
+        FROM meditation_record
+        WHERE user_id = #{userId,jdbcType=BIGINT}
+        AND meditation_date BETWEEN #{startDate,jdbcType=DATE} AND #{endDate,jdbcType=DATE}
+    </select>
+
+    <select id="selectMeditationStreak" parameterType="java.lang.Long" resultType="java.lang.Integer">
+        SELECT COUNT(*) AS streak
+        FROM (
+            SELECT meditation_date, 
+                   DATE_SUB(meditation_date, INTERVAL ROW_NUMBER() OVER (ORDER BY meditation_date) DAY) AS date_group
+            FROM (
+                SELECT DISTINCT meditation_date
+                FROM meditation_record
+                WHERE user_id = #{userId,jdbcType=BIGINT}
+                ORDER BY meditation_date DESC
+            ) AS distinct_dates
+        ) AS grouped_dates
+        WHERE date_group = (
+            SELECT DATE_SUB(MAX(meditation_date), INTERVAL ROW_NUMBER() OVER (ORDER BY meditation_date) DAY) AS latest_group
+            FROM (
+                SELECT DISTINCT meditation_date
+                FROM meditation_record
+                WHERE user_id = #{userId,jdbcType=BIGINT}
+                ORDER BY meditation_date DESC
+                LIMIT 1
+            ) AS latest_date
+        )
+    </select>
+</mapper> 

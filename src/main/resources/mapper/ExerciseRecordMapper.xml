@@ -1,0 +1,107 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.healthmanager.mapper.ExerciseRecordMapper">
+    <resultMap id="BaseResultMap" type="com.healthmanager.entity.ExerciseRecord">
+        <id column="id" property="id" jdbcType="BIGINT"/>
+        <result column="user_id" property="userId" jdbcType="BIGINT"/>
+        <result column="type" property="type" jdbcType="VARCHAR"/>
+        <result column="name" property="name" jdbcType="VARCHAR"/>
+        <result column="duration" property="duration" jdbcType="INTEGER"/>
+        <result column="distance" property="distance" jdbcType="DECIMAL"/>
+        <result column="calories" property="calories" jdbcType="INTEGER"/>
+        <result column="pace" property="pace" jdbcType="VARCHAR"/>
+        <result column="exercise_date" property="exerciseDate" jdbcType="DATE"/>
+        <result column="exercise_time" property="exerciseTime" jdbcType="TIME"/>
+        <result column="notes" property="notes" jdbcType="VARCHAR"/>
+        <result column="create_time" property="createTime" jdbcType="TIMESTAMP"/>
+        <result column="update_time" property="updateTime" jdbcType="TIMESTAMP"/>
+    </resultMap>
+
+    <sql id="Base_Column_List">
+        id, user_id, type, name, duration, distance, calories, pace, exercise_date, exercise_time, notes, create_time, update_time
+    </sql>
+
+    <select id="selectById" parameterType="java.lang.Long" resultMap="BaseResultMap">
+        SELECT
+        <include refid="Base_Column_List"/>
+        FROM exercise_record
+        WHERE id = #{id,jdbcType=BIGINT}
+    </select>
+
+    <select id="selectByUserId" parameterType="java.lang.Long" resultMap="BaseResultMap">
+        SELECT
+        <include refid="Base_Column_List"/>
+        FROM exercise_record
+        WHERE user_id = #{userId,jdbcType=BIGINT}
+        ORDER BY exercise_date DESC, exercise_time DESC
+    </select>
+
+    <select id="selectByUserIdAndDateRange" resultMap="BaseResultMap">
+        SELECT
+        <include refid="Base_Column_List"/>
+        FROM exercise_record
+        WHERE user_id = #{userId,jdbcType=BIGINT}
+        AND exercise_date BETWEEN #{startDate,jdbcType=DATE} AND #{endDate,jdbcType=DATE}
+        ORDER BY exercise_date ASC, exercise_time ASC
+    </select>
+
+    <insert id="insert" parameterType="com.healthmanager.entity.ExerciseRecord" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO exercise_record (user_id, type, name, duration, distance, calories, pace, exercise_date, exercise_time, notes)
+        VALUES (#{userId,jdbcType=BIGINT}, #{type,jdbcType=VARCHAR}, #{name,jdbcType=VARCHAR},
+                #{duration,jdbcType=INTEGER}, #{distance,jdbcType=DECIMAL}, #{calories,jdbcType=INTEGER},
+                #{pace,jdbcType=VARCHAR}, #{exerciseDate,jdbcType=DATE}, #{exerciseTime,jdbcType=TIME}, #{notes,jdbcType=VARCHAR})
+    </insert>
+
+    <update id="update" parameterType="com.healthmanager.entity.ExerciseRecord">
+        UPDATE exercise_record
+        <set>
+            <if test="type != null">
+                type = #{type,jdbcType=VARCHAR},
+            </if>
+            <if test="name != null">
+                name = #{name,jdbcType=VARCHAR},
+            </if>
+            <if test="duration != null">
+                duration = #{duration,jdbcType=INTEGER},
+            </if>
+            <if test="distance != null">
+                distance = #{distance,jdbcType=DECIMAL},
+            </if>
+            <if test="calories != null">
+                calories = #{calories,jdbcType=INTEGER},
+            </if>
+            <if test="pace != null">
+                pace = #{pace,jdbcType=VARCHAR},
+            </if>
+            <if test="exerciseDate != null">
+                exercise_date = #{exerciseDate,jdbcType=DATE},
+            </if>
+            <if test="exerciseTime != null">
+                exercise_time = #{exerciseTime,jdbcType=TIME},
+            </if>
+            <if test="notes != null">
+                notes = #{notes,jdbcType=VARCHAR},
+            </if>
+        </set>
+        WHERE id = #{id,jdbcType=BIGINT}
+    </update>
+
+    <delete id="deleteById" parameterType="java.lang.Long">
+        DELETE FROM exercise_record
+        WHERE id = #{id,jdbcType=BIGINT}
+    </delete>
+
+    <select id="countByUserIdAndDateRange" resultType="java.lang.Integer">
+        SELECT COUNT(*)
+        FROM exercise_record
+        WHERE user_id = #{userId,jdbcType=BIGINT}
+        AND exercise_date BETWEEN #{startDate,jdbcType=DATE} AND #{endDate,jdbcType=DATE}
+    </select>
+
+    <select id="sumDurationByUserIdAndDateRange" resultType="java.lang.Integer">
+        SELECT IFNULL(SUM(duration), 0)
+        FROM exercise_record
+        WHERE user_id = #{userId,jdbcType=BIGINT}
+        AND exercise_date BETWEEN #{startDate,jdbcType=DATE} AND #{endDate,jdbcType=DATE}
+    </select>
+</mapper> 

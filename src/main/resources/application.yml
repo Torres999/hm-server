@@ -1,0 +1,51 @@
+server:
+  port: 8080
+  servlet:
+    context-path: /hm
+
+spring:
+  datasource:
+    driver-class-name: com.mysql.jdbc.Driver
+    url: jdbc:mysql://localhost:3306/health_manager?useUnicode=true&characterEncoding=utf-8&useSSL=false
+    username: root
+    password: 123456
+  mvc:
+    pathmatch:
+      matching-strategy: ant_path_matcher
+  cache:
+    type: redis
+  redis:
+    host: localhost
+    port: 6379
+    database: 0
+    timeout: 60000
+
+mybatis:
+  mapper-locations: classpath:mapper/*.xml
+  type-aliases-package: com.healthmanager.entity
+  configuration:
+    map-underscore-to-camel-case: true
+    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
+
+logging:
+  level:
+    com.healthmanager: debug
+    org.springframework.security: info
+
+jwt:
+  secret: healthmanager_secret_key_for_jwt_token_generation_and_validation
+  expiration: 86400000  # 24小时，单位：毫秒
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,metrics,prometheus
+  endpoint:
+    health:
+      show-details: always
+
+# 微信小程序配置
+wechat:
+  appid: your_appid_here
+  secret: your_secret_here 

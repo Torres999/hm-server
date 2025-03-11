@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.healthmanager.mapper.ActivityStatsMapper">
+    <resultMap id="BaseResultMap" type="com.healthmanager.entity.ActivityStats">
+        <id column="id" property="id" jdbcType="BIGINT"/>
+        <result column="user_id" property="userId" jdbcType="BIGINT"/>
+        <result column="period_type" property="periodType" jdbcType="VARCHAR"/>
+        <result column="period_value" property="periodValue" jdbcType="VARCHAR"/>
+        <result column="exercise_sessions" property="exerciseSessions" jdbcType="INTEGER"/>
+        <result column="exercise_minutes" property="exerciseMinutes" jdbcType="INTEGER"/>
+        <result column="exercise_calories" property="exerciseCalories" jdbcType="INTEGER"/>
+        <result column="exercise_distance" property="exerciseDistance" jdbcType="DECIMAL"/>
+        <result column="meditation_sessions" property="meditationSessions" jdbcType="INTEGER"/>
+        <result column="meditation_minutes" property="meditationMinutes" jdbcType="INTEGER"/>
+        <result column="meditation_streak" property="meditationStreak" jdbcType="INTEGER"/>
+        <result column="steps_total" property="stepsTotal" jdbcType="INTEGER"/>
+        <result column="steps_daily_average" property="stepsDailyAverage" jdbcType="INTEGER"/>
+        <result column="steps_best_day" property="stepsBestDay" jdbcType="VARCHAR"/>
+        <result column="create_time" property="createTime" jdbcType="TIMESTAMP"/>
+        <result column="update_time" property="updateTime" jdbcType="TIMESTAMP"/>
+    </resultMap>
+
+    <sql id="Base_Column_List">
+        id, user_id, period_type, period_value, exercise_sessions, exercise_minutes, exercise_calories, exercise_distance,
+        meditation_sessions, meditation_minutes, meditation_streak, steps_total, steps_daily_average, steps_best_day,
+        create_time, update_time
+    </sql>
+
+    <select id="selectById" parameterType="java.lang.Long" resultMap="BaseResultMap">
+        SELECT
+        <include refid="Base_Column_List"/>
+        FROM activity_stats
+        WHERE id = #{id,jdbcType=BIGINT}
+    </select>
+
+    <select id="selectByUserIdAndPeriod" resultMap="BaseResultMap">
+        SELECT
+        <include refid="Base_Column_List"/>
+        FROM activity_stats
+        WHERE user_id = #{userId,jdbcType=BIGINT}
+        AND period_type = #{periodType,jdbcType=VARCHAR}
+        AND period_value = #{periodValue,jdbcType=VARCHAR}
+    </select>
+
+    <insert id="insert" parameterType="com.healthmanager.entity.ActivityStats" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO activity_stats (
+            user_id, period_type, period_value, exercise_sessions, exercise_minutes, exercise_calories, exercise_distance,
+            meditation_sessions, meditation_minutes, meditation_streak, steps_total, steps_daily_average, steps_best_day
+        )
+        VALUES (
+            #{userId,jdbcType=BIGINT}, #{periodType,jdbcType=VARCHAR}, #{periodValue,jdbcType=VARCHAR},
+            #{exerciseSessions,jdbcType=INTEGER}, #{exerciseMinutes,jdbcType=INTEGER}, #{exerciseCalories,jdbcType=INTEGER}, #{exerciseDistance,jdbcType=DECIMAL},
+            #{meditationSessions,jdbcType=INTEGER}, #{meditationMinutes,jdbcType=INTEGER}, #{meditationStreak,jdbcType=INTEGER},
+            #{stepsTotal,jdbcType=INTEGER}, #{stepsDailyAverage,jdbcType=INTEGER}, #{stepsBestDay,jdbcType=VARCHAR}
+        )
+    </insert>
+
+    <update id="update" parameterType="com.healthmanager.entity.ActivityStats">
+        UPDATE activity_stats
+        <set>
+            <if test="exerciseSessions != null">
+                exercise_sessions = #{exerciseSessions,jdbcType=INTEGER},
+            </if>
+            <if test="exerciseMinutes != null">
+                exercise_minutes = #{exerciseMinutes,jdbcType=INTEGER},
+            </if>
+            <if test="exerciseCalories != null">
+                exercise_calories = #{exerciseCalories,jdbcType=INTEGER},
+            </if>
+            <if test="exerciseDistance != null">
+                exercise_distance = #{exerciseDistance,jdbcType=DECIMAL},
+            </if>
+            <if test="meditationSessions != null">
+                meditation_sessions = #{meditationSessions,jdbcType=INTEGER},
+            </if>
+            <if test="meditationMinutes != null">
+                meditation_minutes = #{meditationMinutes,jdbcType=INTEGER},
+            </if>
+            <if test="meditationStreak != null">
+                meditation_streak = #{meditationStreak,jdbcType=INTEGER},
+            </if>
+            <if test="stepsTotal != null">
+                steps_total = #{stepsTotal,jdbcType=INTEGER},
+            </if>
+            <if test="stepsDailyAverage != null">
+                steps_daily_average = #{stepsDailyAverage,jdbcType=INTEGER},
+            </if>
+            <if test="stepsBestDay != null">
+                steps_best_day = #{stepsBestDay,jdbcType=VARCHAR},
+            </if>
+        </set>
+        WHERE id = #{id,jdbcType=BIGINT}
+    </update>
+
+    <delete id="deleteById" parameterType="java.lang.Long">
+        DELETE FROM activity_stats
+        WHERE id = #{id,jdbcType=BIGINT}
+    </delete>
+</mapper> 

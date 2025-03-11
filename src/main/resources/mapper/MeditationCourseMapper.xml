@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.healthmanager.mapper.MeditationCourseMapper">
+    <resultMap id="BaseResultMap" type="com.healthmanager.entity.MeditationCourse">
+        <id column="id" property="id" jdbcType="BIGINT"/>
+        <result column="title" property="title" jdbcType="VARCHAR"/>
+        <result column="description" property="description" jdbcType="VARCHAR"/>
+        <result column="duration" property="duration" jdbcType="INTEGER"/>
+        <result column="image" property="image" jdbcType="VARCHAR"/>
+        <result column="audio_url" property="audioUrl" jdbcType="VARCHAR"/>
+        <result column="category_id" property="categoryId" jdbcType="BIGINT"/>
+        <result column="steps" property="steps" jdbcType="VARCHAR"/>
+        <result column="create_time" property="createTime" jdbcType="TIMESTAMP"/>
+        <result column="update_time" property="updateTime" jdbcType="TIMESTAMP"/>
+    </resultMap>
+
+    <sql id="Base_Column_List">
+        id, title, description, duration, image, audio_url, category_id, steps, create_time, update_time
+    </sql>
+
+    <select id="selectById" parameterType="java.lang.Long" resultMap="BaseResultMap">
+        SELECT
+        <include refid="Base_Column_List"/>
+        FROM meditation_course
+        WHERE id = #{id,jdbcType=BIGINT}
+    </select>
+
+    <select id="selectAll" resultMap="BaseResultMap">
+        SELECT
+        <include refid="Base_Column_List"/>
+        FROM meditation_course
+        ORDER BY id ASC
+    </select>
+
+    <select id="selectByCategoryId" parameterType="java.lang.Long" resultMap="BaseResultMap">
+        SELECT
+        <include refid="Base_Column_List"/>
+        FROM meditation_course
+        WHERE category_id = #{categoryId,jdbcType=BIGINT}
+        ORDER BY id ASC
+    </select>
+
+    <insert id="insert" parameterType="com.healthmanager.entity.MeditationCourse" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO meditation_course (title, description, duration, image, audio_url, category_id, steps)
+        VALUES (#{title,jdbcType=VARCHAR}, #{description,jdbcType=VARCHAR}, #{duration,jdbcType=INTEGER},
+                #{image,jdbcType=VARCHAR}, #{audioUrl,jdbcType=VARCHAR}, #{categoryId,jdbcType=BIGINT}, #{steps,jdbcType=VARCHAR})
+    </insert>
+
+    <update id="update" parameterType="com.healthmanager.entity.MeditationCourse">
+        UPDATE meditation_course
+        <set>
+            <if test="title != null">
+                title = #{title,jdbcType=VARCHAR},
+            </if>
+            <if test="description != null">
+                description = #{description,jdbcType=VARCHAR},
+            </if>
+            <if test="duration != null">
+                duration = #{duration,jdbcType=INTEGER},
+            </if>
+            <if test="image != null">
+                image = #{image,jdbcType=VARCHAR},
+            </if>
+            <if test="audioUrl != null">
+                audio_url = #{audioUrl,jdbcType=VARCHAR},
+            </if>
+            <if test="categoryId != null">
+                category_id = #{categoryId,jdbcType=BIGINT},
+            </if>
+            <if test="steps != null">
+                steps = #{steps,jdbcType=VARCHAR},
+            </if>
+        </set>
+        WHERE id = #{id,jdbcType=BIGINT}
+    </update>
+
+    <delete id="deleteById" parameterType="java.lang.Long">
+        DELETE FROM meditation_course
+        WHERE id = #{id,jdbcType=BIGINT}
+    </delete>
+</mapper> 

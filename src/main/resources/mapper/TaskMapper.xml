@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.healthmanager.mapper.TaskMapper">
+    <resultMap id="BaseResultMap" type="com.healthmanager.entity.Task">
+        <id column="id" property="id" jdbcType="BIGINT"/>
+        <result column="user_id" property="userId" jdbcType="BIGINT"/>
+        <result column="title" property="title" jdbcType="VARCHAR"/>
+        <result column="description" property="description" jdbcType="VARCHAR"/>
+        <result column="type" property="type" jdbcType="VARCHAR"/>
+        <result column="completed" property="completed" jdbcType="BIT"/>
+        <result column="task_date" property="taskDate" jdbcType="DATE"/>
+        <result column="create_time" property="createTime" jdbcType="TIMESTAMP"/>
+        <result column="update_time" property="updateTime" jdbcType="TIMESTAMP"/>
+    </resultMap>
+
+    <sql id="Base_Column_List">
+        id, user_id, title, description, type, completed, task_date, create_time, update_time
+    </sql>
+
+    <select id="selectById" parameterType="java.lang.Long" resultMap="BaseResultMap">
+        SELECT
+        <include refid="Base_Column_List"/>
+        FROM task
+        WHERE id = #{id,jdbcType=BIGINT}
+    </select>
+
+    <select id="selectByUserIdAndDate" resultMap="BaseResultMap">
+        SELECT
+        <include refid="Base_Column_List"/>
+        FROM task
+        WHERE user_id = #{userId,jdbcType=BIGINT}
+        AND task_date = #{taskDate,jdbcType=DATE}
+    </select>
+
+    <select id="selectByUserId" parameterType="java.lang.Long" resultMap="BaseResultMap">
+        SELECT
+        <include refid="Base_Column_List"/>
+        FROM task
+        WHERE user_id = #{userId,jdbcType=BIGINT}
+        ORDER BY task_date DESC
+    </select>
+
+    <insert id="insert" parameterType="com.healthmanager.entity.Task" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO task (user_id, title, description, type, completed, task_date)
+        VALUES (#{userId,jdbcType=BIGINT}, #{title,jdbcType=VARCHAR}, #{description,jdbcType=VARCHAR},
+                #{type,jdbcType=VARCHAR}, #{completed,jdbcType=BIT}, #{taskDate,jdbcType=DATE})
+    </insert>
+
+    <update id="update" parameterType="com.healthmanager.entity.Task">
+        UPDATE task
+        <set>
+            <if test="title != null">
+                title = #{title,jdbcType=VARCHAR},
+            </if>
+            <if test="description != null">
+                description = #{description,jdbcType=VARCHAR},
+            </if>
+            <if test="type != null">
+                type = #{type,jdbcType=VARCHAR},
+            </if>
+            <if test="completed != null">
+                completed = #{completed,jdbcType=BIT},
+            </if>
+            <if test="taskDate != null">
+                task_date = #{taskDate,jdbcType=DATE},
+            </if>
+        </set>
+        WHERE id = #{id,jdbcType=BIGINT}
+    </update>
+
+    <update id="updateCompletedStatus">
+        UPDATE task
+        SET completed = #{completed,jdbcType=BIT}
+        WHERE id = #{id,jdbcType=BIGINT}
+    </update>
+
+    <delete id="deleteById" parameterType="java.lang.Long">
+        DELETE FROM task
+        WHERE id = #{id,jdbcType=BIGINT}
+    </delete>
+</mapper> 
