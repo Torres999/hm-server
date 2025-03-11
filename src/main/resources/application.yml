@@ -21,6 +21,13 @@ spring:
     port: 6379
     database: 0
     timeout: 60000
+  security:
+    basic:
+      path: /swagger-ui.html
+      enabled: true
+    user:
+      name: admin
+      password: admin
 
 # Swagger 2.x 配置
 springfox:
