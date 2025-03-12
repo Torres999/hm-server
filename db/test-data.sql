@@ -16,12 +16,15 @@ TRUNCATE TABLE `activity_stats`;
 SET FOREIGN_KEY_CHECKS = 1;
 
 -- 插入用户数据
-INSERT INTO `user` (`id`, `open_id`, `nick_name`, `avatar_url`, `gender`, `phone`, `create_time`, `update_time`) VALUES
-(1, 'wx_openid_001', '张三', 'https://example.com/avatars/zhangsan.jpg', 1, '13800138001', '2025-01-01 10:00:00', '2025-01-01 10:00:00'),
-(2, 'wx_openid_002', '李四', 'https://example.com/avatars/lisi.jpg', 1, '13800138002', '2025-01-02 11:00:00', '2025-01-02 11:00:00'),
-(3, 'wx_openid_003', '王五', 'https://example.com/avatars/wangwu.jpg', 1, '13800138003', '2025-01-03 12:00:00', '2025-01-03 12:00:00'),
-(4, 'wx_openid_004', '赵六', 'https://example.com/avatars/zhaoliu.jpg', 1, '13800138004', '2025-01-04 13:00:00', '2025-01-04 13:00:00'),
-(5, 'wx_openid_005', '小红', 'https://example.com/avatars/xiaohong.jpg', 2, '13800138005', '2025-01-05 14:00:00', '2025-01-05 14:00:00');
+INSERT INTO `user` (`id`, `open_id`, `nick_name`, `avatar_url`, `gender`, `phone`, `create_time`, `update_time`)
+VALUES
+	(1, 'wx-openid-001', '张三', 'https://example.com/avatars/zhangsan.jpg', 1, '13800138001', '2025-01-01 10:00:00', '2025-03-12 10:44:58'),
+	(2, 'wx_openid_002', '李四', 'https://example.com/avatars/lisi.jpg', 1, '13800138002', '2025-01-02 11:00:00', '2025-01-02 11:00:00'),
+	(3, 'wx_openid_003', '王五', 'https://example.com/avatars/wangwu.jpg', 1, '13800138003', '2025-01-03 12:00:00', '2025-01-03 12:00:00'),
+	(4, 'wx_openid_004', '赵六', 'https://example.com/avatars/zhaoliu.jpg', 1, '13800138004', '2025-01-04 13:00:00', '2025-01-04 13:00:00'),
+	(5, 'wx_openid_005', '小红', 'https://example.com/avatars/xiaohong.jpg', 2, '13800138005', '2025-01-05 14:00:00', '2025-01-05 14:00:00'),
+	(6, 'wx_openid_001', '张三', 'https://example.com/avatars/zhangsan.jpg', 1, '13800138001', '2025-03-12 09:05:19', '2025-03-12 10:44:55');
+
 
 -- 插入健康数据
 INSERT INTO `health_data` (`user_id`, `steps`, `heart_rate`, `sleep_hours`, `calories`, `record_date`, `create_time`, `update_time`) VALUES

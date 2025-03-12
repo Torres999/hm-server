@@ -49,9 +49,9 @@ mybatis:
 
 logging:
   level:
-    com.healthmanager: info
-    org.springframework.security: info
-    springfox: info
+    com.healthmanager: debug
+    org.springframework.security: debug
+    springfox: debug
 
 jwt:
   secret: healthmanager_secret_key_for_jwt_token_generation_and_validation
