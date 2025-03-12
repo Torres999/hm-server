@@ -15,7 +15,7 @@ import io.swagger.annotations.ApiParam;
  */
 @Slf4j
 @RestController
-@RequestMapping("/api/users")
+@RequestMapping("/hm/users")
 @Api(tags = "用户管理", description = "用户信息管理相关接口")
 public class UserController {
     

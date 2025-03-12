@@ -22,7 +22,7 @@ import javax.validation.Valid;
  */
 @Slf4j
 @RestController
-@RequestMapping("/api/auth")
+@RequestMapping("/auth")
 @Api(tags = "认证管理", description = "用户认证相关接口")
 public class AuthController {
 

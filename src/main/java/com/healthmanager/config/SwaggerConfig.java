@@ -62,7 +62,7 @@ public class SwaggerConfig implements WebMvcConfigurer {
     private SecurityContext securityContext() {
         return SecurityContext.builder()
                 .securityReferences(defaultAuth())
-                .forPaths(PathSelectors.regex("^(?!/api/auth).*$"))
+                .forPaths(PathSelectors.regex("^(?!/hm/auth).*$"))
                 .build();
     }
     

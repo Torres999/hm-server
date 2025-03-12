@@ -62,7 +62,7 @@ hm-server/
 ## 接口文档
 项目集成了Swagger，启动应用后可以通过以下地址访问接口文档：
 ```
-http://localhost:8080/api/swagger-ui/index.html
+http://localhost:8080/hm/swagger-ui/index.html
 ```
 
 ## 快速开始
@@ -124,6 +124,6 @@ java -jar target/hm-server-0.0.1-SNAPSHOT.jar
 MIT License
 
 ## 测试
-1.获取JWT令牌： 你需要先调用登录接口（如/api/auth/login）获取JWT令牌，登录成功后，将返回的token复制下来，然后按上述步骤在Swagger UI中授权。
+1.获取JWT令牌： 你需要先调用登录接口（如/hm/auth/login）获取JWT令牌，登录成功后，将返回的token复制下来，然后按上述步骤在Swagger UI中授权。
 2.获取的token需要在前面加上“Bearer ”，在Swagger UI中使用JWT令牌的步骤：首先，访问Swagger UI界面（通常是 http://localhost:8080/hm/swagger-ui.html） ，在Swagger UI界面右上角，你会看到一个"Authorize"按钮（锁形图标），点击它。
 3.首页的测试数据需要把task表中的数据改成测试当天的。

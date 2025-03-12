@@ -38,6 +38,13 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         String username = null;
         String jwtToken = null;
 
+        String path = request.getRequestURI();
+        // 对登录接口放行，不进行token校验
+        if (path.contains("/auth/login") || path.contains("/auth/wx-login")) {
+            chain.doFilter(request, response);
+            return;
+        }
+
         // JWT Token格式为 "Bearer token"，去除Bearer部分
         if (requestTokenHeader != null && requestTokenHeader.startsWith("Bearer ")) {
             jwtToken = requestTokenHeader.substring(7);
