@@ -99,6 +99,14 @@ mvn clean package
 java -jar target/hm-server-0.0.1-SNAPSHOT.jar
 ```
 
+5.运行项目前初始化数据
+```sql
+update health_data set user_id = 1 where 对应的数据id; -- 具体看对应的微信id
+update health_data set record_date = '2023-11-21'、'2023-11-22'、'2023-11-23'、'2023-11-24'、'2023-11-25' where user_id = 1; -- 具体日期写今天以前的6天
+update task set task_date = today where user_id = 1 and 对应的数据id; -- 具体看对应的微信id
+小程序默认打开了演示环境开关
+```
+
 ## 开发指南
 ### 添加新功能
 1. 创建实体类
